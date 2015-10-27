@@ -41,7 +41,7 @@ Login to allegro (use constructor data)
 The api use _call to maping functions names to allegro request. You should use short names without "do". Use  getCountries (to rum allegro doGetCountries function).
 
 `````php
-  $allegroApi = new AllegroApi($config);
+  $allegroApi = new AllegroApi($login, $hashPassword, $apiKey, $sandbox, $countryCode);
   $countrisResponse = $allegroApi->getCountries();
 `````
 
