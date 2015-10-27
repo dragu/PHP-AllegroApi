@@ -2,8 +2,8 @@
 
 namespace AllegroApi;
 
-class AllegroApiException extends \Exception {
-
+class AllegroApiException extends \Exception
+{
 	const ALLOW_ONLY_OBJECT = 1000;
 	const PARAMETER_INCORECT = 1001;
 

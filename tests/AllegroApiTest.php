@@ -11,52 +11,50 @@ class AllegroApiTest extends \PHPUnit_Framework_TestCase
 
 	public function testCanLoginEnc()
 	{
-		//config
+		// config
 		$config = ConfigDistributor::getInstance()->getConfig();
 
-		//create object
+		// create an object
 		$allegroApi = new AllegroApi($config->login, $config->hashPassword, $config->apikey, $config->sandbox, $config->countryCode);
 
-		//test plain login
-		// ok, if no exception
-		$throwException = false;
+		/**
+		 * test plain login
+		 * ok, if no exception
+		 */
+		$throwsException = false;
+
 		try {
 			$allegroApi->loginEnc();
 		} catch (Exception $ex) {
-			$throwException = true;
+			$throwsException = true;
 		}
-		//no throw a exception if success
-		$this->assertEquals(false, $throwException);
+
+		// doesn't throw an exception on success
+		$this->assertEquals(false, $throwsException);
 	}
 
 	public function testCanExecuteRemoteFunction()
 	{
-		//config
 		$config = ConfigDistributor::getInstance()->getConfig();
-
-		//create object
 		$allegroApi = new AllegroApi($config->login, $config->hashPassword, $config->apikey, $config->sandbox, $config->countryCode);
 
-		//execute remote function
-		$throwException = false;
+		// execute remote function
+		$throwsException = false;
+
 		try {
 			$allegroApi->getCountries();
 		} catch (Exception $ex) {
-			$throwException = true;
+			$throwsException = true;
 		}
-		//no throw a exception if success
-		$this->assertEquals(false, $throwException);
+
+		$this->assertEquals(false, $throwsException);
 	}
 
 	public function testDoesExecuteResultIsObject()
 	{
-		//config
 		$config = ConfigDistributor::getInstance()->getConfig();
-
-		//create object
 		$allegroApi = new AllegroApi($config->login, $config->hashPassword, $config->apikey, $config->sandbox, $config->countryCode);
 
-		//execute remote function
 		$result = $allegroApi->getCountries();
 		$this->assertEquals(true, is_object($result));
 	}

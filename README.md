@@ -9,7 +9,7 @@ To run test you must insert you login, password and appkey to Config/config.ini 
 
 `````ini
 login = "Insert your login here"
-hashPassword = "Insert your password's hash here - never do it in production"
+hashPassword = "Insert your password's hash here - NEVER do it in production"
 apikey = "Insert your apikey here"
 sandbox = false
 countryCode = 1
