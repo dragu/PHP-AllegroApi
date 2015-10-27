@@ -1,5 +1,5 @@
 {
-  "name": "sebastianpozoga/php-allegroapi",
+  "name": "dragu/php-allegroapi",
   "description": "A newest library to communicate with Allegro Api. The library is OOP, good tested and easy to use. Make your job enjoyable. The version is tested with PHP5.5",
   "keywords": [
     "php",
@@ -14,7 +14,11 @@
     {
       "name": "Sebastian Pożoga",
       "email": "sebastian@pozoga.eu"
-    }
+    },
+	{
+      "name": "Szymon Pawłowicz",
+      "email": "szymon@pawlowicz.it"
+	}
   ],
   "minimum-stability": "stable",
   "require": {
