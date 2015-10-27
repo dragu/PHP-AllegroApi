@@ -5,35 +5,17 @@ require __DIR__ . "/../src/AllegroApi/AllegroApi.php";
 require "ConfigDistributor.php";
 
 use AllegroApi\AllegroApi;
-use AllegroApi\AllegroApiException;
 
-class AllegroApiTest extends \PHPUnit_Framework_TestCase {
+class AllegroApiTest extends \PHPUnit_Framework_TestCase
+{
 
-	public function testCanLogin() {
+	public function testCanLoginEnc()
+	{
 		//config
 		$config = ConfigDistributor::getInstance()->getConfig();
 
 		//create object
-		$allegroApi = new AllegroApi($config);
-
-		//test plain login
-		// ok, if no exception
-		$throwException = false;
-		try {
-			$allegroApi->login();
-		} catch (Exception $ex) {
-			$throwException = true;
-		}
-		//no throw a exception if success
-		$this->assertEquals(false, $throwException);
-	}
-
-	public function testCanLoginEnc() {
-		//config
-		$config = ConfigDistributor::getInstance()->getConfig();
-
-		//create object
-		$allegroApi = new AllegroApi($config);
+		$allegroApi = new AllegroApi($config->login, $config->hashPassword, $config->apikey, $config->sandbox, $config->countryCode);
 
 		//test plain login
 		// ok, if no exception
@@ -47,24 +29,13 @@ class AllegroApiTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals(false, $throwException);
 	}
 
-	public function testConstructorPreventArray() {
-		try {
-			new AllegroApi([]);
-		} catch (AllegroApiException $ex) {
-			//thrown no object exception
-			$this->assertEquals(AllegroApiException::ALLOW_ONLY_OBJECT, $ex->getCode());
-			$throwException = true;
-		}
-		// must throw exception
-		$this->assertEquals(true, $throwException);
-	}
-
-	public function testCanExecuteRemoteFunction() {
+	public function testCanExecuteRemoteFunction()
+	{
 		//config
 		$config = ConfigDistributor::getInstance()->getConfig();
 
 		//create object
-		$allegroApi = new AllegroApi($config);
+		$allegroApi = new AllegroApi($config->login, $config->hashPassword, $config->apikey, $config->sandbox, $config->countryCode);
 
 		//execute remote function
 		$throwException = false;
@@ -77,12 +48,13 @@ class AllegroApiTest extends \PHPUnit_Framework_TestCase {
 		$this->assertEquals(false, $throwException);
 	}
 
-	public function testDoesExecuteResultIsObject() {
+	public function testDoesExecuteResultIsObject()
+	{
 		//config
 		$config = ConfigDistributor::getInstance()->getConfig();
 
 		//create object
-		$allegroApi = new AllegroApi($config);
+		$allegroApi = new AllegroApi($config->login, $config->hashPassword, $config->apikey, $config->sandbox, $config->countryCode);
 
 		//execute remote function
 		$result = $allegroApi->getCountries();

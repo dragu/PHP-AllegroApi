@@ -15,12 +15,12 @@ class ConfigDistributor {
 			throw new \Exception("No read or decode config.ini file");
 		}
 
-		$this->config = json_decode(json_encode($data), FALSE);
+		$this->config = json_decode(json_encode($data));
 
 		if (!$this->config->login) {
 			throw new \Exception("Must set login for Allegro API server");
 		}
-		if (!$this->config->password) {
+		if (!$this->config->hashPassword) {
 			throw new \Exception("Must set password for Allegro API server");
 		}
 		if (!$this->config->apikey) {
@@ -32,6 +32,9 @@ class ConfigDistributor {
 		if (!$this->config->countryCode) {
 			throw new \Exception("Must set countryCode for Allegro API server");
 		}
+
+		$this->config->sandbox = (bool) $this->config->sandbox;
+		$this->config->countryCode = (int) $this->config->countryCode;
 	}
 
 	public function getConfig() {
@@ -40,8 +43,8 @@ class ConfigDistributor {
 
 	public function getParameters() {
 		return array(
-			'username' => $this->config->username,
-			'password' => $this->config->password,
+			'login' => $this->config->login,
+			'hashPassword' => $this->config->hashPassword,
 			'sandbox' => $this->config->sandbox,
 			'appkey' => $this->config->appkey,
 			'countryCode' => $this->config->countryCode
