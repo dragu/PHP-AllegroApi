@@ -4,8 +4,8 @@ namespace AllegroApi;
 
 require_once "AllegroApiException.php";
 
-class AllegroApi {
-
+class AllegroApi
+{
 	const WSDL = 'https://webapi.allegro.pl/service.php?wsdl';
 	const WSDL_SANDBOX = 'https://webapi.allegro.pl.webapisandbox.pl/service.php?wsdl';
 
@@ -18,42 +18,28 @@ class AllegroApi {
 	//public
 	public $country_code = null;
 
-	function __construct($config) {
-		//prevents
-		if (!is_object($config)) {
-			throw new AllegroApiException("Allow only stdObject as parameter", AllegroApiException::ALLOW_ONLY_OBJECT);
-		}
-		if (!$config->password && !$config->hashPassword) {
-			throw new AllegroApiException(
-				"Must set password for Allegro API server", AllegroApiException::PARAMETER_INCORECT
-			);
-		}
-		if (!$config->login) {
-			throw new AllegroApiException(
-				"Must set login for Allegro API server", AllegroApiException::PARAMETER_INCORECT
-			);
-		}
-		if (!$config->apikey) {
-			throw new AllegroApiException(
-				"Must set apikey for Allegro API server", AllegroApiException::PARAMETER_INCORECT
-			);
-		}
-		if (!isset($config->sandbox)) {
-			throw new AllegroApiException(
-				"Must set sandbox flag for Allegro API server", AllegroApiException::PARAMETER_INCORECT
-			);
-		}
-		if (!$config->countryCode) {
-			throw new AllegroApiException(
-				"Must set countryCode for Allegro API server", AllegroApiException::PARAMETER_INCORECT
-			);
-		}
+	/**
+	 * @param string $login
+	 * @param string $hashPassword
+	 * @param string $apiKey
+	 * @param bool $sandbox
+	 * @param int $countryCode
+	 */
+	function __construct($login, $hashPassword, $apiKey, $sandbox, $countryCode)
+	{
+		$this->validateContructorParams($login, $hashPassword, $apiKey, $sandbox, $countryCode);
 
 		//save data
-		$this->config = $config;
+		$this->config = (object) [
+			'login'			=> $login,
+			'hashPassword'	=> $hashPassword,
+			'apikey'		=> $apiKey,
+			'sandbox'		=> $sandbox,
+			'countryCode'	=> $countryCode,
+		];
 
 		//math wsdl
-		$wsdl = (isset($config->sandbox) && (int)$config->sandbox) ? self::WSDL_SANDBOX : self::WSDL;
+		$wsdl = (isset($this->config->sandbox) && (int)$this->config->sandbox) ? self::WSDL_SANDBOX : self::WSDL;
 
 		//crete client
 		$this->client = new \SoapClient(
@@ -64,32 +50,15 @@ class AllegroApi {
 
 		//create request id data
 		$this->request = array(
-			'countryId' => $config->countryCode, //for old function - example: doGetShipmentData
-			'countryCode' => $config->countryCode, //for new function
-			'webapiKey' => $config->apikey,
-			'localVersion' => $this->loadVersionKey($config->countryCode)
+			'countryId' => $this->config->countryCode, //for old function - example: doGetShipmentData
+			'countryCode' => $this->config->countryCode, //for new function
+			'webapiKey' => $this->config->apikey,
+			'localVersion' => $this->loadVersionKey($this->config->countryCode)
 		);
 	}
 
-	/**
-	 * This function is not safe. Always hash password before use and STORAGE it.
-	 *
-	 * @deprecated
-	 */
-	function login() {
-		//always safe login method (hash password if is not hashed)
-		if (!isset($this->config->hashPassword)) {
-			//prevents
-			if (!$this->config->password) {
-				throw new AllegroApiException("No set password to login");
-			}
-			//do
-			$this->config->hashPassword = base64_encode(hash('sha256', $this->config->password, true));
-		}
-		$this->loginEnc();
-	}
-
-	function loginEnc() {
+	function loginEnc()
+	{
 		//prevents
 		if (!$this->config->hashPassword) {
 			throw new AllegroApiException("No set sha256 hash password to login");
@@ -109,11 +78,13 @@ class AllegroApi {
 		$this->request['sessionHandle'] = $this->session->sessionHandlePart; //for older functions
 	}
 
-	protected function buildRequest($data) {
+	protected function buildRequest($data)
+	{
 		return array_replace_recursive($this->request, (array)$data);
 	}
 
-	protected function buildResponse($obj) {
+	protected function buildResponse($obj)
+	{
 		return $obj;
 	}
 
@@ -121,7 +92,8 @@ class AllegroApi {
 	 * MAGIC METHODS
 	 */
 
-	function __call($name, $arguments) {
+	function __call($name, $arguments)
+	{
 		//prepare data
 		$params = isset($arguments[0]) ? (array)$arguments[0] : array();
 		$request = $this->buildRequest($params);
@@ -138,7 +110,8 @@ class AllegroApi {
 	 * HELPERS
 	 */
 
-	private function loadVersionKey($countryCode) {
+	private function loadVersionKey($countryCode)
+	{
 		$sys = $this->client->doQueryAllSysStatus(
 			array(
 				'countryId' => $this->config->countryCode,
@@ -151,5 +124,21 @@ class AllegroApi {
 			}
 		}
 		throw new Exception("No find country by code: ${$countryCode}");
+	}
+
+	/**
+	 * @param string $login
+	 * @param string $hashPassword
+	 * @param string $apiKey
+	 * @param bool $sandbox
+	 * @param int $countryCode
+	 */
+	private function validateContructorParams($login, $hashPassword, $apiKey, $sandbox, $countryCode)
+	{
+		assert(strlen($login));
+		assert(strlen($apiKey));
+		assert($sandbox !== null && is_bool($sandbox));
+		assert(is_int($countryCode) && $countryCode > 0);
+		assert(strlen($hashPassword));
 	}
 }
