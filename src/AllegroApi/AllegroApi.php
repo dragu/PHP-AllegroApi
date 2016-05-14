@@ -77,7 +77,7 @@ class AllegroApi
 			'countryId' => $this->config->countryCode, // for old function - example: doGetShipmentData
 			'countryCode' => $this->config->countryCode, // for new function
 			'webapiKey' => $this->config->apikey,
-			'localVersion' => $this->loadVersionKey($this->config->countryCode)
+			'localVersion' => $this->loadVersionKey()
 		];
 	}
 
@@ -130,12 +130,13 @@ class AllegroApi
 	}
 
 	/**
-	 * @param int $countryCode
 	 * @return type
 	 * @throws Exception
 	 */
-	private function loadVersionKey($countryCode)
+	private function loadVersionKey()
 	{
+		$countryCode = $this->config->countryCode;
+
 		$sys = $this->client->doQueryAllSysStatus([
 			'countryId' => $this->config->countryCode,
 			'webapiKey' => $this->config->apikey
