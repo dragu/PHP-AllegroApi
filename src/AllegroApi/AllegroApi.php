@@ -45,6 +45,12 @@ class AllegroApi
 	 */
 	public function __construct($login, $hashPassword, $apiKey, $sandbox, $countryCode)
 	{
+		/**
+		 * bugfix for PHP 7
+		 * Problem SoapFault: Function ("XXX") is not a valid method for this service
+		 */
+		ini_set('soap.wsdl_cache_enabled', '0');
+
 		$this->validateContructorParams($login, $hashPassword, $apiKey, $sandbox, $countryCode);
 
 		$this->config = (object) [
